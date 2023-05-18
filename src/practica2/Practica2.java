@@ -95,12 +95,14 @@ public class Practica2 {
             
             if(linea.charAt(0) == '+' || linea.charAt(0) == '-') idx++; // (+|-)?
             if(idx >= longitud) return false;
-            
-            if(!(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9)) return false; // Decimal 1
             idx++;
+               
+            if(!(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9)) return false; // Decimal 1
             if(idx >= longitud) return false;
+            idx++;
             
             if(!(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9)) return false; // Decimal 2
+            if(idx >= longitud) return true;
             idx++;
             
             // Resto de decimales
@@ -127,7 +129,7 @@ public class Practica2 {
     
     public static void main(String[] args) {
         
-        String cadena = "+123456789.012345678909876543E-71030;";
+        String cadena = "1245.668E-8874";
         
         Pattern parteUno = Pattern.compile("[+|-]?((0(([0-7]*)|x(([0-9]|[A-F])*)))|([1-9](([0-9]*)|(([0-9]*)([.])([0-9]+)(((E([+|-]?)([1-9]([0-9]?[0-9]?[0-9]?))))?)))))([;]?)");
         

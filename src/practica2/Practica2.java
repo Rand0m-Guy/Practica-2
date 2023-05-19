@@ -5,131 +5,145 @@ import java.util.regex.Pattern;
 
 public class Practica2 {
     
-    public static boolean puntoUno(String linea) {
-        int idx = 0;
-        int longitud = linea.length();
-        if(longitud == 0) return false;
+    public static boolean q0(String linea, int idx) {
+        if(idx >= linea.length()) return false;
         
-        if(linea.charAt(0) == '+' || linea.charAt(0) == '-') idx++; // (+|-)?
-        if(idx >= longitud) return false;
+        if(linea.charAt(idx) == '+' | linea.charAt(idx) == '-') return q1(linea, idx + 1);
+        if(linea.charAt(idx) == '0') return q2(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return q4(linea, idx + 1);
+        return false;
+    }
+    
+    public static boolean q1(String linea, int idx) {
+        if(idx >= linea.length()) return false;
         
-        if(linea.charAt(idx) == '0') {
-            idx++;
-            if(idx >= longitud) return true; // (+|-)?0
-            if(linea.charAt(idx) == ';') {
-                if(idx + 1 == longitud) {
-                    return true;
-                }
-                
-                return false; // Checamos ; final
-            }
-            
-            // Hexagesimal
-            if(linea.charAt(idx) == 'x') {
-                idx++;
-                if(idx >= longitud || linea.charAt(idx) == ';') return false; //(+|-)?0x(;?)   es inválido
-                
-                // Checamos 0|1|2|3|4|5|6|7|8|9|A|B|C|D|E|F
-                while(idx < longitud) {
-                    if(!(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9)) {
-                        if(!(linea.charAt(idx) - 'A' >= 0 && linea.charAt(idx) - 'A' <= 5)) {
-                            if(linea.charAt(idx) == ';' && idx + 1 == longitud) { // Checamos ; final
-                                // No hacemos nada
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-                    idx++;
-                }
-                
-                return true;
-            } else {
-                
-                // Octal
-                
-                while(idx < longitud) {
-                    if(!(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 7)) {
-                        if(linea.charAt(idx) == ';' && idx + 1 == longitud) { // Checamos ; final
-                            // No hacemos nada
-                        } else {
-                            return false;
-                        }
-                    }
-                    
-                    idx++;
-                }
-                
-                return true;
-            }
-            
-        } else if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) {
-            while(idx < longitud && linea.charAt(idx) != '.') {
-                if(!(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9)) {
-                    if(linea.charAt(idx) == ';' && idx + 1 >= longitud) {}
-                    else {
-                        return false;
-                    }
-                }
-                idx++;
-            }
-            if(idx >= longitud) return true;
-            
-            idx++; // Leímos un punto, y ahora va todo lo de decimales
-            if(idx >= longitud) return false;
-            
-            if(!(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9)) return false;
-            idx++;
-            
-            while(idx < longitud && linea.charAt(idx) != 'E') {
-                if(!(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9)) {
-                    if(linea.charAt(idx) == ';' && idx + 1 == longitud) {}
-                    else {return false;}
-                }
-                idx++;
-            }
-            if(idx >= longitud) return true; // Flotante normal
-            
-            idx++; // Leí exponente
-            if(idx >= longitud) return false;
-            
-            if(linea.charAt(0) == '+' || linea.charAt(0) == '-') idx++; // (+|-)?
-            if(idx >= longitud) return false;
-            idx++;
-               
-            if(!(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9)) return false; // Decimal 1
-            if(idx >= longitud) return false;
-            idx++;
-            
-            if(!(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9)) return false; // Decimal 2
-            if(idx >= longitud) return true;
-            idx++;
-            
-            // Resto de decimales
-            for(int i = 0; i < 3; i++, idx++) {
-                if(idx >= longitud) return true;
-                
-                if(!(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9)) {
-                    if(linea.charAt(idx) == ';' && idx + 1 == longitud) {}
-                    else {return false;}
-                }
-            }
-            
-            if(idx < longitud) {
-                if(linea.charAt(idx) == ';' && idx + 1 == longitud) {}
-                else {return false;}
-            }
-            
-            return true;
-        }
+        if(linea.charAt(idx) == '0') return q2(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return q4(linea, idx + 1);
         
         return false;
     }
     
+    public static boolean q2(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 7) return q15(linea, idx + 1);
+        if(linea.charAt(idx) == 'x') return q3(linea, idx + 1);
+        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        
+        return false;
+    }
+    
+    public static boolean q3(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q3(linea, idx + 1);
+        if(linea.charAt(idx) - 'A' >= 0 && linea.charAt(idx) - 'A' <= 5) return q3(linea, idx + 1);
+        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        
+        return false;
+    }
+    
+    public static boolean q4(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q4(linea, idx + 1);
+        if(linea.charAt(idx) == '.') return q5(linea, idx + 1);
+        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        
+        return false;
+    }
+    
+    public static boolean q5(String linea, int idx) {
+        if(idx >= linea.length()) return false;
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q6(linea, idx + 1);
+        return false;
+    }
+    
+    public static boolean q6(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q6(linea, idx + 1);
+        if(linea.charAt(idx) == 'E') return q7(linea, idx + 1);
+        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        
+        return false;
+    }
+    
+    public static boolean q7(String linea, int idx) {
+        if(idx >= linea.length()) return false;
+        
+        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return q8(linea, idx + 1);
+        if(linea.charAt(idx) == '+' || linea.charAt(idx) == '-') return q9(linea, idx + 1);
+        
+        return false;
+    }
+    
+    public static boolean q8(String linea, int idx) {
+        if(idx >= linea.length()) return false;
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q10(linea, idx + 1);
+        return false;
+    }
+    
+    public static boolean q9(String linea, int idx) {
+        if(idx >= linea.length()) return false;
+        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return q8(linea, idx + 1);
+        return false;
+    }
+    
+    public static boolean q10(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q11(linea, idx + 1);
+        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        return false;
+    }
+    
+    public static boolean q11(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q12(linea, idx + 1);
+        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        return false;
+    }
+    
+    public static boolean q12(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q13(linea, idx + 1);
+        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        return false;
+    }
+    
+    public static boolean q13(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        return false;
+    }
+    
+    public static boolean q14(String linea, int idx) {
+        if(idx != linea.length()) return false;
+        return true;
+    }
+    
+    public static boolean q15(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 7) return q15(linea, idx + 1);
+        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        
+        return false;
+    }
+
+    /*
+    PLANTILLA NODO
+    public static boolean q(String linea, int idx) {
+        if(idx >= linea.length()) return ;
+        
+        return false;
+    }
+    */
+    
     
     public static void main(String[] args) {
         
-        String cadena = "1245.668E-8874";
+        String cadena = "-123456789.123456789098765432E+11234;";
         
         Pattern parteUno = Pattern.compile("[+|-]?((0(([0-7]*)|x(([0-9]|[A-F])*)))|([1-9](([0-9]*)|(([0-9]*)([.])([0-9]+)(((E([+|-]?)([1-9]([0-9]?[0-9]?[0-9]?))))?)))))([;]?)");
         
@@ -143,7 +157,7 @@ public class Practica2 {
         Matcher matcherC9 = c9.matcher(cadena);
         System.out.println("PARA " + cadena + "\n");
         System.out.println("ERRADO (checar AFD) Parte Uno: " + matcherParteUno.matches());
-        System.out.println("Parte Uno MANUAL: " + puntoUno(cadena));
+        System.out.println("Parte Uno MANUAL: " + q0(cadena, 0));
         System.out.println("Parte Siete: " + matcherC7.matches());
         System.out.println("Parte Nueve: " + matcherC9.matches());
         

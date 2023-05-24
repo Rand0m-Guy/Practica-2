@@ -2,7 +2,10 @@ package practica2;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
 public class Practica2 {
     
     public static boolean symbols(char c) {
@@ -220,5 +223,65 @@ public class Practica2 {
         System.out.println("Parte Siete: " + matcherC7.matches());
         System.out.println("Parte Nueve: " + matcherC9.matches());
         
+        ArrayList<String>lineas=new ArrayList<>();
+        ArrayList<Integer>indices=new ArrayList<>();
+        ArrayList<Integer>idxs=new ArrayList<>();
+        indices.add(0);
+        
+        try{
+            System.out.println("Lectura del archivo");
+            FileReader lector=new FileReader("C:\\ArchivosPrueba\\ficheroprueba.java");
+            BufferedReader bf=new BufferedReader(lector);
+            String linea;
+            while((linea=bf.readLine())!=null)
+            {
+                lineas.add(linea);
+                System.out.println(" "+ linea);
+                
+            }
+
+        }catch(IOException e)
+        {
+            System.out.println("Error");
+        }
+        int i=0;
+        System.out.println("Impresión del ArrayList");
+        for(String s:lineas)
+        {
+            String aux="";
+            System.out.println(""+lineas.get(i));
+            i++;
+        
+        }
+        System.out.println("Numero de lineas del codigo: "+lineas.size());
+        
+        for(i=0;i<lineas.size();i++)
+        {
+            indices.add(lineas.get(i).length());
+        }
+         idxs.add(0);
+        for(i=1;i<=lineas.size();i++)
+        {
+            idxs.add(idxs.get(i-1)+indices.get(i));
+        }
+        i=0;
+        System.out.println("Indices individuales:");
+        for(int j:indices)
+        {
+            
+            System.out.println(""+indices.get(i));
+            i++;
+        }
+        i=0;
+        System.out.println("Indices sumados:");
+        for(int k:idxs)
+        {
+            System.out.println(""+idxs.get(i));
+            i++;
+        }
+        
+        
+        
     }
+    
 }

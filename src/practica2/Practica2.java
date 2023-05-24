@@ -8,132 +8,191 @@ import java.io.IOException;
 import java.util.ArrayList;
 public class Practica2 {
     
+    public static boolean symbols(char c) {
+        if(Character.isWhitespace(c)) return true;
+        if(c == ';' || c == ',') return true;
+        if(c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}') return true;
+        
+        return false;
+    }
+    
     public static boolean q0(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
+        
+        // Constantes numéricas
+        if(linea.charAt(idx) == '+' | linea.charAt(idx) == '-') return qN1(linea, idx + 1);
+        if(linea.charAt(idx) == '0') return qN2(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return qN4(linea, idx + 1);
+        
+        // Palabras reservadas e identificadores válidos
+        if(linea.charAt(idx) - 'a' >= 0 && linea.charAt(idx) - 'a' <= 25) {
+            int lIdx = idx;
+            while(lIdx < linea.length() && !(Character.isWhitespace(linea.charAt(lIdx)) || linea.charAt(lIdx) == ';')) {
+                lIdx++;
+            }
+            String temp = linea.substring(idx, lIdx);
+            if(qReserved(temp)) return q0(linea, lIdx);
+            else {
+                return qId(linea, idx + 1);
+            }
+        }
+        
+        if((linea.charAt(idx) - 'A' >= 0 && linea.charAt(idx) - 'Z' <= 25) || linea.charAt(idx) == '_' || linea.charAt(idx) == '$') {
+            return qId(linea, idx + 1);
+        }
+        
+        
+        
+        return false;
+    }
+    
+    // CONSTANTES NUMÉRICAS
+    public static boolean qN1(String linea, int idx) {
         if(idx >= linea.length()) return false;
         
-        if(linea.charAt(idx) == '+' | linea.charAt(idx) == '-') return q1(linea, idx + 1);
-        if(linea.charAt(idx) == '0') return q2(linea, idx + 1);
-        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return q4(linea, idx + 1);
+        if(linea.charAt(idx) == '0') return qN2(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return qN4(linea, idx + 1);
+        
         return false;
     }
     
-    public static boolean q1(String linea, int idx) {
+    public static boolean qN2(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 7) return qN15(linea, idx + 1);
+        if(linea.charAt(idx) == 'x') return qN3(linea, idx + 1);
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
+        
+        return false;
+    }
+    
+    public static boolean qN3(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return qN3(linea, idx + 1);
+        if(linea.charAt(idx) - 'A' >= 0 && linea.charAt(idx) - 'A' <= 5) return qN3(linea, idx + 1);
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
+        
+        return false;
+    }
+    
+    public static boolean qN4(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return qN4(linea, idx + 1);
+        if(linea.charAt(idx) == '.') return qN5(linea, idx + 1);
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
+        
+        return false;
+    }
+    
+    public static boolean qN5(String linea, int idx) {
+        if(idx >= linea.length()) return false;
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return qN6(linea, idx + 1);
+        return false;
+    }
+    
+    public static boolean qN6(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return qN6(linea, idx + 1);
+        if(linea.charAt(idx) == 'E') return qN7(linea, idx + 1);
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
+        
+        return false;
+    }
+    
+    public static boolean qN7(String linea, int idx) {
         if(idx >= linea.length()) return false;
         
-        if(linea.charAt(idx) == '0') return q2(linea, idx + 1);
-        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return q4(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return qN8(linea, idx + 1);
+        if(linea.charAt(idx) == '+' || linea.charAt(idx) == '-') return qN9(linea, idx + 1);
         
         return false;
     }
     
-    public static boolean q2(String linea, int idx) {
-        if(idx >= linea.length()) return true;
-        
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 7) return q15(linea, idx + 1);
-        if(linea.charAt(idx) == 'x') return q3(linea, idx + 1);
-        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
-        
-        return false;
-    }
-    
-    public static boolean q3(String linea, int idx) {
-        if(idx >= linea.length()) return true;
-        
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q3(linea, idx + 1);
-        if(linea.charAt(idx) - 'A' >= 0 && linea.charAt(idx) - 'A' <= 5) return q3(linea, idx + 1);
-        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
-        
-        return false;
-    }
-    
-    public static boolean q4(String linea, int idx) {
-        if(idx >= linea.length()) return true;
-        
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q4(linea, idx + 1);
-        if(linea.charAt(idx) == '.') return q5(linea, idx + 1);
-        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
-        
-        return false;
-    }
-    
-    public static boolean q5(String linea, int idx) {
+    public static boolean qN8(String linea, int idx) {
         if(idx >= linea.length()) return false;
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q6(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return qN10(linea, idx + 1);
         return false;
     }
     
-    public static boolean q6(String linea, int idx) {
-        if(idx >= linea.length()) return true;
-        
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q6(linea, idx + 1);
-        if(linea.charAt(idx) == 'E') return q7(linea, idx + 1);
-        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
-        
-        return false;
-    }
-    
-    public static boolean q7(String linea, int idx) {
+    public static boolean qN9(String linea, int idx) {
         if(idx >= linea.length()) return false;
-        
-        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return q8(linea, idx + 1);
-        if(linea.charAt(idx) == '+' || linea.charAt(idx) == '-') return q9(linea, idx + 1);
-        
+        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return qN8(linea, idx + 1);
         return false;
     }
     
-    public static boolean q8(String linea, int idx) {
-        if(idx >= linea.length()) return false;
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q10(linea, idx + 1);
-        return false;
-    }
-    
-    public static boolean q9(String linea, int idx) {
-        if(idx >= linea.length()) return false;
-        if(linea.charAt(idx) - '0' >= 1 && linea.charAt(idx) - '0' <= 9) return q8(linea, idx + 1);
-        return false;
-    }
-    
-    public static boolean q10(String linea, int idx) {
+    public static boolean qN10(String linea, int idx) {
         if(idx >= linea.length()) return true;
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q11(linea, idx + 1);
-        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return qN11(linea, idx + 1);
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
         return false;
     }
     
-    public static boolean q11(String linea, int idx) {
+    public static boolean qN11(String linea, int idx) {
         if(idx >= linea.length()) return true;
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q12(linea, idx + 1);
-        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return qN12(linea, idx + 1);
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
         return false;
     }
     
-    public static boolean q12(String linea, int idx) {
+    public static boolean qN12(String linea, int idx) {
         if(idx >= linea.length()) return true;
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return q13(linea, idx + 1);
-        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9) return qN13(linea, idx + 1);
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
         return false;
     }
     
-    public static boolean q13(String linea, int idx) {
+    public static boolean qN13(String linea, int idx) {
         if(idx >= linea.length()) return true;
-        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
         return false;
     }
     
-    public static boolean q14(String linea, int idx) {
-        if(idx != linea.length()) return false;
-        return true;
-    }
-    
-    public static boolean q15(String linea, int idx) {
+    public static boolean qN15(String linea, int idx) {
         if(idx >= linea.length()) return true;
         
-        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 7) return q15(linea, idx + 1);
-        if(linea.charAt(idx) == ';') return q14(linea, idx + 1);
+        if(linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 7) return qN15(linea, idx + 1);
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
         
         return false;
     }
-
+    
+    public static boolean qReserved(String s) {
+        String[] res = {"abstract","assert","boolean","break","byte","case","catch","char","class","continue","const","default","do","double","else","enum","exports","extends","final","finally","float","for","goto","if","implements","import","instanceof","int","interface","long","module","native","new","package","private","protected","public","requires","return","short","static","strictfp","super","switch","synchronized","this","throw","throws","transient","try","var","void","volatile","while"};
+        
+        for(int i = 0; i < res.length; i++) {
+            if(s.equals(res[i])) return true;
+        }
+        return false;
+    }
+    
+    public static boolean qId(String linea, int idx) {
+        if(idx >= linea.length()) return true;
+        
+        if((linea.charAt(idx) - 'a' >= 0 && linea.charAt(idx) - 'a' <= 25) || (linea.charAt(idx) - 'A' >= 0 && linea.charAt(idx) - 'Z' <= 25) || linea.charAt(idx) == '_' || linea.charAt(idx) == '$' || (linea.charAt(idx) - '0' >= 0 && linea.charAt(idx) - '0' <= 9)) {
+            return qId(linea, idx + 1);
+        }
+        
+        if(symbols(linea.charAt(idx))) return q0(linea, idx + 1);
+        
+        return false;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /*
     PLANTILLA NODO
     public static boolean q(String linea, int idx) {
@@ -146,7 +205,7 @@ public class Practica2 {
     
     public static void main(String[] args) {
         
-        String cadena = "0xADEDDDDDDDDDDD0123456789999995635435645";
+        String cadena = "int num 0652; int pArsEr0 123; int holaPerr123_12 -0xA12;   ";
         
         Pattern parteUno = Pattern.compile("[+|-]?((0(([0-7]*)|x(([0-9]|[A-F])*)))|([1-9](([0-9]*)|(([0-9]*)([.])([0-9]+)(((E([+|-]?)([1-9]([0-9]?[0-9]?[0-9]?))))?)))))([;]?)");
         

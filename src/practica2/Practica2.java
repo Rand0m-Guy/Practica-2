@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 public class Practica2 {
     
     public static boolean symbols(char c) {
@@ -15,6 +16,8 @@ public class Practica2 {
         
         return false;
     }
+    
+    
     
     public static boolean q0(String linea, int idx) {
         if(idx >= linea.length()) return true;
@@ -184,6 +187,91 @@ public class Practica2 {
     
     
     
+    //division de la cadena en subcadenas
+    public static boolean qa0(String eva)
+    {
+        int iau=0;
+        ArrayList<String>subc=new ArrayList<>();
+        String subca;
+        int j=0, inicio=0;
+        //separa la cadena en subcadenas
+        String [] palabras=eva.split(" ");
+        Collections.addAll(subc, palabras);
+        String aux=subc.get(iau).toString();
+        System.out.println("numero de subcadenas:" + subc.size());
+        System.out.println("Subcadena en estado 0: "+aux+"   "+iau);
+        
+        //(identificador||constante)
+        if(qId(aux,iau)||q0(aux, iau))
+        {
+            return qa1(iau+1, subc);
+        }else{
+            return false;
+        }
+        
+    }
+    
+    //evaluacion siguiente-> "="
+    public static boolean qa1(int ident, ArrayList subcadenas)
+    {
+        System.out.println("Subcadena en estado 1: "+subcadenas.get(ident));
+        if(subcadenas.get(ident).equals("="))
+        {
+            return qa2(ident+1, subcadenas);
+        }else{
+            return false;
+        }
+    }
+    
+    public static boolean qa2(int ident, ArrayList subcadenas)
+    {
+        
+        String aux=subcadenas.get(ident).toString();
+        System.out.println("subcadena en estado 2 (casteo): "+aux );
+        //subca es la subcadena que está acotada por los paréntesis del casteo
+        
+        
+        
+        //Si hay parentesis, debe haber casteo
+        if(aux.charAt(0)=='(' && aux.charAt(aux.length()-1)==')')
+        {
+            String subca=aux.substring(1, aux.length()-1);
+            System.out.println("Subcadena: "+subca);
+            //si subca es reservada, es casteo, por lo tanto pasa al siguiente estado
+            if(qReserved(subca))
+            {
+                System.out.println("Hay casteo");
+                return qa3(ident+1, subcadenas);
+            }else{
+                return false;
+            }
+               
+        }else{
+            System.out.println("No hay casteo");
+        }
+        
+        //si no hay casteo, se comprueba si es una variable o una constante
+        if(qId(aux, 0)||q0(aux,0))
+        {
+            return qa3(ident, subcadenas);
+        }else{
+            return false;
+        }
+    }
+    
+    public static boolean qa3(int ident, ArrayList subcadenas)
+    {
+        System.out.println("subcadena final: "+subcadenas.get(ident));
+        String aux=subcadenas.get(ident).toString();
+        if((qId(aux, 0)||q0(aux,0)))
+        {
+            return true;
+        }else{
+            return false;
+        }
+    }
+   
+    
     
     
     
@@ -213,7 +301,7 @@ public class Practica2 {
         
         Pattern c9 = Pattern.compile("\\/((\\/(.+))|((((\\*)(([^/])((([^*])|(\\*[^/]))*)))\\*\\/)))");
         
-        
+        String asignacion="501 = 13;";
         Matcher matcherParteUno = parteUno.matcher(cadena);
         Matcher matcherC7 = c7.matcher(cadena);
         Matcher matcherC9 = c9.matcher(cadena);
@@ -222,7 +310,8 @@ public class Practica2 {
         System.out.println("Parte Uno MANUAL: " + q0(cadena, 0));
         System.out.println("Parte Siete: " + matcherC7.matches());
         System.out.println("Parte Nueve: " + matcherC9.matches());
-        
+        System.out.println("Asignacion de prueba: "+ asignacion);
+        System.out.println("Asignacion evaluada como " + qa0(asignacion));
         ArrayList<String>lineas=new ArrayList<>();
         ArrayList<Integer>indices=new ArrayList<>();
         ArrayList<Integer>idxs=new ArrayList<>();

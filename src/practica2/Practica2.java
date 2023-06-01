@@ -24,14 +24,15 @@ public class Practica2 {
         if(Character.isWhitespace(c)) return true;
         if(c == ';' || c == ',') return true;
         if(c == '.' || c == ':') return true;
-        if(c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}') return true;
+//        if(c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}') return true;
+        if(c == '\\') return true;
         
         return false;
     }
     
     public static boolean q0() {
         if(indiceGlobal >= idxs.get(idxs.size() - 1)) return true;
-        if(lineaActual >= lineas.size()) return true;
+        if(lineaActual > lineas.size()) return true;
         indiceGlobal++;
         indiceLocal++;
         if(indiceLocal >= indices.get(lineaActual)) {
@@ -66,7 +67,7 @@ public class Practica2 {
             }
         }
         
-        if((lineas.get(lineaActual - 1).charAt(indiceLocal) - 'A' >= 0 && lineas.get(lineaActual - 1).charAt(indiceLocal) - 'Z' <= 25) || lineas.get(lineaActual - 1).charAt(indiceLocal) == '_' || lineas.get(lineaActual - 1).charAt(indiceLocal) == '$') {
+        if((lineas.get(lineaActual - 1).charAt(indiceLocal) - 'A' >= 0 && lineas.get(lineaActual - 1).charAt(indiceLocal) - 'A' <= 25) || lineas.get(lineaActual - 1).charAt(indiceLocal) == '_' || lineas.get(lineaActual - 1).charAt(indiceLocal) == '$') {
             return qId();
         }
         
@@ -388,6 +389,9 @@ public class Practica2 {
         return false;
     }
     
+    
+    
+    
     public static boolean qId() {
         if(indiceGlobal >= idxs.get(idxs.size() - 1)) return true;
         indiceGlobal++;
@@ -399,11 +403,165 @@ public class Practica2 {
             return q0();
         }
         char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
-        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'Z' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
             return qId();
         }
         
+        if(Character.isWhitespace(c))
+        {
+            return qwsp();
+        }
+        if(c=='<'||c=='>'||c=='=')
+        {
+            return comps();
+        }
+        if(c=='!')
+            return qa3();
+        
+        if(c=='+'||c=='-')
+            return qa11();
+        
+        if(c=='*'||c=='/'||c=='%')
+            return qa4();
+        
+        
         if(symbols(c)) return q0();
+        
+        
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+        
+        return q0();
+    }
+    
+    
+    public static boolean qwsp() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+//            errores.add(lineaActual);
+            return true;
+        }
+        if(lineaActual > lineas.size()) {
+//            errores.add(lineaActual);
+            return true;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+//            errores.add(lineaActual);
+            lineaActual++;
+            return q0();
+        }
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
+        if(Character.isWhitespace(c))
+            return qwsp();
+        
+        if(c=='<'||c=='>'||c=='=')
+        {
+            return comps();
+        }
+        
+        if(c=='!')
+            return qa3();
+        
+        if(c=='+'||c=='-')
+            return qa11();
+        
+        if(c=='*'||c=='/'||c=='%')
+            return qa4();
+        
+       
+//        indiceGlobal = idxs.get(lineaActual) - 1;
+//        indiceLocal = -1;
+//        errores.add(lineaActual);
+//        lineaActual++;
+        
+        return q0();
+    }
+    
+    
+    
+    
+    public static boolean comps() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+            errores.add(lineaActual);
+            return false;
+        }
+        if(lineaActual > lineas.size()) {
+            errores.add(lineaActual);
+            return false;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            errores.add(lineaActual);
+            lineaActual++;
+            return q0();
+        }
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
+        if(Character.isWhitespace(c))
+        {
+            return  qa5();
+        }
+        
+//        if(c - 'a'>= 0 && c - 'a' <= 25)
+//            return qa6();
+        
+        if(c=='=')
+            return qa2();
+        //aceptacion qa10
+        // Valores numéricos
+        if(c == '+' || c == '-') return qN1();
+        if(c == '0') return qN2();
+        if(c- '0' >= 1 && c- '0' <= 9) return qN4();
+        // Identificador
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+          return qId();
+        }
+        
+        
+       
+//        System.out.println("Error en comps, c:"+c);
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+        return q0();
+    }
+    
+    
+    
+    
+    public static boolean qa3() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+            errores.add(lineaActual);
+            return false;
+        }
+        if(lineaActual > lineas.size()) {
+            errores.add(lineaActual);
+            return false;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            errores.add(lineaActual);
+            lineaActual++;
+            return q0();
+        }
+        
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
+        if(c=='=')
+            return qa2();
         
         indiceGlobal = idxs.get(lineaActual) - 1;
         indiceLocal = -1;
@@ -412,6 +570,351 @@ public class Practica2 {
         return q0();
     }
     
+    
+     public static boolean qa2() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+            errores.add(lineaActual);
+            return false;
+        }
+        if(lineaActual > lineas.size()) {
+            errores.add(lineaActual);
+            return false;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            errores.add(lineaActual);
+            lineaActual++;
+            return q0();
+        }
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
+//        if(c=='(')
+//            return qa6();
+        if(Character.isWhitespace(c))
+        {
+            return  qa5();
+        }
+        
+        
+        //qa10
+        // Valores numéricos
+        if(c == '+' || c == '-') return qN1();
+        if(c == '0') return qN2();
+        if(c- '0' >= 1 && c- '0' <= 9) return qN4();
+        // Identificador
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+          return qId();
+        }
+        
+//        System.out.println("Error en a2, c:"+c);
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+        return q0();
+    }
+     
+     
+      public static boolean qa4() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+            errores.add(lineaActual);
+            return false;
+        }
+        if(lineaActual > lineas.size()) {
+            errores.add(lineaActual);
+            return false;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            errores.add(lineaActual);
+            lineaActual++;
+            return q0();
+        }
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
+        if(Character.isWhitespace(c))
+            return qa5();
+        
+//        if(c=='(')
+//            return qa6();
+        if(c=='=')
+            return comps();
+        //qa10
+        // Valores numéricos
+        if(c == '+' || c == '-') return qN1();
+        if(c == '0') return qN2();
+        if(c- '0' >= 1 && c- '0' <= 9) return qN4();
+        // Identificador
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+          return qId();
+        }
+//        System.out.println("Error en qa4, c:"+c);
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+        return q0();
+    }
+      
+      
+    public static boolean qa5() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+            errores.add(lineaActual);
+            return false;
+        }
+        if(lineaActual > lineas.size()) {
+            errores.add(lineaActual);
+            return false;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            errores.add(lineaActual);
+            lineaActual++;
+            return q0();
+        }
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
+//        if(c=='(')
+//            return qa6();
+        if(Character.isWhitespace(c))
+            return qa5();
+        
+        //qa10
+        // Valores numéricos
+        if(c == '+' || c == '-') return qN1();
+        if(c == '0') return qN2();
+        if(c- '0' >= 1 && c- '0' <= 9) return qN4();
+        // Identificador
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+          return qId();
+        }
+//        System.out.println("Error en qa5, c:"+c);
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+        return q0();
+    }
+    
+    public static boolean qa7(){
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+            errores.add(lineaActual);
+            return false;
+        }
+        if(lineaActual > lineas.size()) {
+            errores.add(lineaActual);
+            return false;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            errores.add(lineaActual);
+            lineaActual++;
+            return q0();
+        }
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal-1);
+        if(c==')')
+        {
+            return qa8();
+        }
+        if(Character.isWhitespace(c))
+            return qa7();
+        
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+        
+//        System.out.println("Error en q7, caracter:"+c);
+        return q0();
+    }
+        
+    public static boolean qa8() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+            errores.add(lineaActual);
+            return false;
+        }
+        if(lineaActual > lineas.size()) {
+            errores.add(lineaActual);
+            return false;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            errores.add(lineaActual);
+            lineaActual++;
+            return q0();
+        }
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
+
+        if(Character.isWhitespace(c))
+            return qa9();
+        
+        //qa10
+        // Valores numéricos
+        if(c == '+' || c == '-') return qN1();
+        if(c == '0') return qN2();
+        if(c- '0' >= 1 && c- '0' <= 9) return qN4();
+        // Identificador
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+          return qId();
+        }
+        
+        
+        
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+//        System.out.println("Error en q8, caracter:"+c);
+        return q0();
+    }
+    
+         
+    public static boolean qa9() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+            errores.add(lineaActual);
+            return false;
+        }
+        if(lineaActual > lineas.size()) {
+            errores.add(lineaActual);
+            return false;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            errores.add(lineaActual);
+            lineaActual++;
+            return q0();
+        }
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
+        if(Character.isWhitespace(c))
+            return qa9();
+        
+        
+        //qa10
+        // Valores numéricos
+        if(c == '+' || c == '-') return qN1();
+        if(c == '0') return qN2();
+        if(c- '0' >= 1 && c- '0' <= 9) return qN4();
+        // Identificador
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+          return qId();
+        }
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+        return q0();
+    }
+    
+    public static boolean qa11() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
+            errores.add(lineaActual);
+            return false;
+        }
+        if(lineaActual >= lineas.size()) {
+            errores.add(lineaActual);
+            return false;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            errores.add(lineaActual); //SÓLO SI NO ES DE ACEPTACIÓN
+            lineaActual++;
+            return q0();
+        }
+        
+        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
+        
+        if(lineas.get(lineaActual - 1).charAt(indiceLocal - 1) == '+') {
+            if(c == '+') return q0();
+        }
+        
+        if(lineas.get(lineaActual - 1).charAt(indiceLocal - 1) == '-') {
+            if(c == '-') return q0();
+        }
+        
+        if(Character.isWhitespace(c))
+            return qa5();
+        
+//        if(c=='(')
+//            return qa6();
+        if(c=='=')
+            return comps();
+        //qa10
+        // Valores numéricos
+        if(c == '0') return qN2();
+        if(c- '0' >= 1 && c- '0' <= 9) return qN4();
+        // Identificador
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+          return qId();
+        }
+        
+        
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+        return q0();
+    }
+         
+         
+      
+      
+       
+       
+       
+        /*
+    PLANTILLA NODO
+    En los return vacío pones
+        Si es de aceptación: true
+        Si no: false
+    
+    public static boolean q() {
+        if(indiceGlobal >= idxs.get(idxs.size() - 1)) return ;
+        if(lineaActual >= lineas.size()) {
+            // errores.add(lineaActual); SÓLO SI NO ES DE ACEPTACIÓN
+            return ;
+        }
+        indiceGlobal++;
+        indiceLocal++;
+        if(indiceLocal >= indices.get(lineaActual)) {
+            indiceLocal = -1;
+            indiceGlobal--;
+            // errores.add(lineaActual); SÓLO SI NO ES DE ACEPTACIÓN
+            lineaActual++;
+            return q0();
+        }
+        
+        
+        indiceGlobal = idxs.get(lineaActual) - 1;
+        indiceLocal = -1;
+        errores.add(lineaActual);
+        lineaActual++;
+        return q0();
+    }
+    */
     public static boolean qC1() {
         if(indiceGlobal >= idxs.get(idxs.size() - 1)) {errores.add(lineaActual); return false;}
         indiceGlobal++;
@@ -458,7 +961,7 @@ public class Practica2 {
     
     public static boolean qC4() {
         if(indiceGlobal >= idxs.get(idxs.size() - 1)) {errores.add(lineaActual); return false;}
-        if(lineaActual >= lineas.size()) {errores.add(lineaActual); return false;}
+        if(lineaActual > lineas.size()) {errores.add(lineaActual); return false;}
         indiceGlobal++;
         indiceLocal++;
         if(indiceLocal >= indices.get(lineaActual)) {
@@ -474,12 +977,13 @@ public class Practica2 {
     
     public static boolean qC5() {
         if(indiceGlobal >= idxs.get(idxs.size() - 1)) {errores.add(lineaActual); return false;}
-        if(lineaActual >= lineas.size()) {errores.add(lineaActual); return false;}
+        if(lineaActual > lineas.size()) {errores.add(lineaActual); return false;}
         indiceGlobal++;
         indiceLocal++;
         if(indiceLocal >= indices.get(lineaActual)) {
             indiceLocal = -1;
             indiceGlobal--;
+            errores.add(lineaActual);
             lineaActual++;
             return q0();
         }
@@ -488,36 +992,8 @@ public class Practica2 {
         else return qC4();
     }
     
-    /*
-    PLANTILLA NODO
-    En los return vacío pones
-        Si es de aceptación: true
-        Si no: false
     
-    public static boolean q() {
-        if(indiceGlobal >= idxs.get(idxs.size() - 1)) return ;
-        if(lineaActual >= lineas.size()) {
-            // errores.add(lineaActual); SÓLO SI NO ES DE ACEPTACIÓN
-            return ;
-        }
-        indiceGlobal++;
-        indiceLocal++;
-        if(indiceLocal >= indices.get(lineaActual)) {
-            indiceLocal = -1;
-            indiceGlobal--;
-            // errores.add(lineaActual); SÓLO SI NO ES DE ACEPTACIÓN
-            lineaActual++;
-            return q0();
-        }
-        
-        
-        indiceGlobal = idxs.get(lineaActual) - 1;
-        indiceLocal = -1;
-        errores.add(lineaActual);
-        lineaActual++;
-        return q0();
-    }
-    */
+   
     
     
     public static void main(String[] args) {
@@ -529,6 +1005,12 @@ public class Practica2 {
             BufferedReader bf=new BufferedReader(lector);
             String linea;
             while((linea=bf.readLine())!=null) {
+                linea = linea.replace('(', ' ');
+                linea = linea.replace(')', ' ');
+                linea = linea.replace('[', ' ');
+                linea = linea.replace(']', ' ');
+                linea = linea.replace('{', ' ');
+                linea = linea.replace('}', ' ');
                 lineas.add(linea);
             }
         } catch(IOException e) {
@@ -544,8 +1026,8 @@ public class Practica2 {
             idxs.add(idxs.get(i-1)+indices.get(i));
         }
         
-//        for(String s : lineas)
-//            System.out.println(s);
+        for(String s : lineas)
+            System.out.println(s);
         
 //        System.out.println("Locales");
 //        for(int i : indices) {

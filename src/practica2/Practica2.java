@@ -24,7 +24,7 @@ public class Practica2 {
         if(Character.isWhitespace(c)) return true;
         if(c == ';' || c == ',') return true;
         if(c == '.' || c == ':') return true;
-        if(c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}') return true;
+//        if(c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}') return true;
         if(c == '\\') return true;
         
         return false;
@@ -439,19 +439,19 @@ public class Practica2 {
     
     public static boolean qwsp() {
         if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
-            errores.add(lineaActual);
-            return false;
+//            errores.add(lineaActual);
+            return true;
         }
         if(lineaActual > lineas.size()) {
-            errores.add(lineaActual);
-            return false;
+//            errores.add(lineaActual);
+            return true;
         }
         indiceGlobal++;
         indiceLocal++;
         if(indiceLocal >= indices.get(lineaActual)) {
             indiceLocal = -1;
             indiceGlobal--;
-            errores.add(lineaActual);
+//            errores.add(lineaActual);
             lineaActual++;
             return q0();
         }
@@ -510,8 +510,9 @@ public class Practica2 {
         {
             return  qa5();
         }
-        if(c=='(')
-            return qa6();
+        
+//        if(c - 'a'>= 0 && c - 'a' <= 25)
+//            return qa6();
         
         if(c=='=')
             return qa2();
@@ -590,8 +591,8 @@ public class Practica2 {
         }
         
         char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
-        if(c=='(')
-            return qa6();
+//        if(c=='(')
+//            return qa6();
         if(Character.isWhitespace(c))
         {
             return  qa5();
@@ -640,8 +641,8 @@ public class Practica2 {
         if(Character.isWhitespace(c))
             return qa5();
         
-        if(c=='(')
-            return qa6();
+//        if(c=='(')
+//            return qa6();
         if(c=='=')
             return comps();
         //qa10
@@ -682,8 +683,8 @@ public class Practica2 {
         }
         
         char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
-        if(c=='(')
-            return qa6();
+//        if(c=='(')
+//            return qa6();
         if(Character.isWhitespace(c))
             return qa5();
         
@@ -701,49 +702,6 @@ public class Practica2 {
         indiceLocal = -1;
         errores.add(lineaActual);
         lineaActual++;
-        return q0();
-    }
-       
-       
-       
-    public static boolean qa6() {
-        if(indiceGlobal >= idxs.get(idxs.size() - 1)) {
-            errores.add(lineaActual);
-            return false;
-        }
-        if(lineaActual > lineas.size()) {
-            errores.add(lineaActual);
-            return false;
-        }
-        indiceGlobal++;
-        indiceLocal++;
-        if(indiceLocal >= indices.get(lineaActual)) {
-            indiceLocal = -1;
-            indiceGlobal--;
-            errores.add(lineaActual);
-            lineaActual++;
-            return q0();
-        }
-        
-        char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
-         if(c - 'a' >= 0 && c - 'a' <= 25){
-            int lIdx = indiceLocal;
-            while(lIdx < lineas.get(lineaActual - 1).length() && !(symbols(lineas.get(lineaActual - 1).charAt(lIdx)))) {
-                lIdx++;
-            }
-            String temp = lineas.get(lineaActual - 1).substring(indiceLocal, lIdx);
-//            System.out.println("TEMP: " + temp);
-            if(qReserved(temp)) {
-                indiceLocal = lIdx;
-                indiceGlobal = indiceLocal + idxs.get(lineaActual - 1);
-                return qa7();
-            }  
-        } 
-        indiceGlobal = idxs.get(lineaActual) - 1;
-        indiceLocal = -1;
-        errores.add(lineaActual);
-        lineaActual++;
-//           System.out.println("Error en q6");
         return q0();
     }
     
@@ -900,13 +858,12 @@ public class Practica2 {
         if(Character.isWhitespace(c))
             return qa5();
         
-        if(c=='(')
-            return qa6();
+//        if(c=='(')
+//            return qa6();
         if(c=='=')
             return comps();
         //qa10
         // Valores numéricos
-        if(c == '+' || c == '-') return qN1();
         if(c == '0') return qN2();
         if(c- '0' >= 1 && c- '0' <= 9) return qN4();
         // Identificador
@@ -1048,6 +1005,12 @@ public class Practica2 {
             BufferedReader bf=new BufferedReader(lector);
             String linea;
             while((linea=bf.readLine())!=null) {
+                linea = linea.replace('(', ' ');
+                linea = linea.replace(')', ' ');
+                linea = linea.replace('[', ' ');
+                linea = linea.replace(']', ' ');
+                linea = linea.replace('{', ' ');
+                linea = linea.replace('}', ' ');
                 lineas.add(linea);
             }
         } catch(IOException e) {

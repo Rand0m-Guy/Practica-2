@@ -52,13 +52,13 @@ public class Practica2 {
         // Palabras reservadas e identificadores válidos
         if(lineas.get(lineaActual - 1).charAt(indiceLocal) - 'a' >= 0 && lineas.get(lineaActual - 1).charAt(indiceLocal) - 'a' <= 25)          {
             int lIdx = indiceLocal;
-            while(lIdx < lineas.get(lineaActual - 1).length() && (lineas.get(lineaActual - 1).charAt(lIdx) - 'a' >= 0 && lineas.get(lineaActual - 1).charAt(lIdx) - 'a' <= 25)) {
+            while(lIdx < lineas.get(lineaActual - 1).length() && !(symbols(lineas.get(lineaActual - 1).charAt(lIdx)))) {
                 lIdx++;
             }
             String temp = lineas.get(lineaActual - 1).substring(indiceLocal, lIdx);
 //            System.out.println("TEMP: " + temp);
             if(qReserved(temp)) {
-                indiceLocal = lIdx - 1;
+                indiceLocal = lIdx;
                 indiceGlobal = indiceLocal + idxs.get(lineaActual - 1);
                 return q0();
             }
@@ -403,7 +403,7 @@ public class Practica2 {
             return q0();
         }
         char c = lineas.get(lineaActual - 1).charAt(indiceLocal);
-        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'Z' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
             return qId();
         }
         
@@ -521,7 +521,7 @@ public class Practica2 {
         if(c == '0') return qN2();
         if(c- '0' >= 1 && c- '0' <= 9) return qN4();
         // Identificador
-        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'Z' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
           return qId();
         }
         
@@ -604,7 +604,7 @@ public class Practica2 {
         if(c == '0') return qN2();
         if(c- '0' >= 1 && c- '0' <= 9) return qN4();
         // Identificador
-        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'Z' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
           return qId();
         }
         
@@ -650,7 +650,7 @@ public class Practica2 {
         if(c == '0') return qN2();
         if(c- '0' >= 1 && c- '0' <= 9) return qN4();
         // Identificador
-        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'Z' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
           return qId();
         }
 //        System.out.println("Error en qa4, c:"+c);
@@ -693,7 +693,7 @@ public class Practica2 {
         if(c == '0') return qN2();
         if(c- '0' >= 1 && c- '0' <= 9) return qN4();
         // Identificador
-        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'Z' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
           return qId();
         }
 //        System.out.println("Error en qa5, c:"+c);
@@ -813,7 +813,7 @@ public class Practica2 {
         if(c == '0') return qN2();
         if(c- '0' >= 1 && c- '0' <= 9) return qN4();
         // Identificador
-        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'Z' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
           return qId();
         }
         
@@ -858,7 +858,7 @@ public class Practica2 {
         if(c == '0') return qN2();
         if(c- '0' >= 1 && c- '0' <= 9) return qN4();
         // Identificador
-        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'Z' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
           return qId();
         }
         indiceGlobal = idxs.get(lineaActual) - 1;
@@ -910,7 +910,7 @@ public class Practica2 {
         if(c == '0') return qN2();
         if(c- '0' >= 1 && c- '0' <= 9) return qN4();
         // Identificador
-        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'Z' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
+        if((c - 'a' >= 0 && c - 'a' <= 25) || (c - 'A' >= 0 && c - 'A' <= 25) || c == '_' || c == '$' || (c - '0' >= 0 && c - '0' <= 9)) {
           return qId();
         }
         
